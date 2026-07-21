@@ -1,0 +1,46 @@
+[general]
+name=Advanced Profile Tool
+qgisMinimumVersion=3.28
+description=Alignment-based cross-section generation, multi-DEM profile extraction, interactive section viewer, terrain comparison, volumes, and CAD/report exports (CSV, Excel, PDF, PNG, SVG, DXF).
+about=Civil-3D-style section generator for QGIS. Generate cross-sections along an alignment by interval, count or chainage list; sample multiple DEMs with bilinear/cubic interpolation; view long sections and cross-sections interactively with vertical exaggeration; compute cut/fill areas and average-end-area volumes; export styled section layers, tables and drawing sheets. Requires matplotlib and numpy (bundled with standard QGIS installations). Excel export additionally requires the optional Python package openpyxl; when it is not installed the Excel option is disabled and all other formats keep working.
+
+version=1.2.4
+author=Nikhil Jacob
+email=nikhiljacob143@gmail.com
+license=GPL-2.0-or-later
+
+tracker=https://github.com/nikhiljacob143/advanced-profile-tool/issues
+repository=https://github.com/nikhiljacob143/advanced-profile-tool
+homepage=https://github.com/nikhiljacob143/advanced-profile-tool
+
+tags=profile,cross section,elevation,dem,alignment,chainage,volume,cut fill,dxf,civil
+
+category=Raster
+icon=icons/advanced_profile_tool.png
+
+experimental=True
+deprecated=False
+hasProcessingProvider=yes
+server=False
+
+changelog=1.2.4
+    - Qt6 / QGIS 4 compatibility: fully-scoped enum names throughout
+      (Qt.DockWidgetArea.*, Qgis.MessageLevel.*, etc.), exec_() renamed
+      to exec(), Qt imports exclusively via qgis.PyQt. Works on both
+      Qt5 and Qt6 builds of QGIS.
+    1.2.3
+    - Remove scanner config file; ship with default security rules
+    1.2.2
+    - Resolve remaining Bandit findings: file-manager launch now uses
+      QDesktopServices instead of subprocess (also fixes non-Windows
+      platforms); vendored dxfwrite asserts replaced with explicit checks
+    - Fix latent Python-3 bugs in vendored dxfwrite (reduce, basestring)
+    - New plugin icon
+    1.2.1
+    - Security-scan compliance: all silent exception handlers now log the
+      suppressed condition (Bandit B110/B112); cache fingerprint marks
+      SHA-1 as non-security use (B324)
+    1.2.0
+    - Vertex handling (bisector / incoming / outgoing) now honoured by the section engine
+    - Excel export degrades gracefully when openpyxl is not installed
+    - Added README; metadata cleanup for QGIS plugin repository submission

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- Copyright (C) 2026 Nikhil Jacob — GPL v2 or later -->
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced Profile Tool — User Guide</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #222;
+         max-width: 860px; margin: 2em auto; padding: 0 1.5em;
+         line-height: 1.55; }
+  h1 { color: #1a3a6b; border-bottom: 2px solid #1a3a6b;
+       padding-bottom: 0.3em; }
+  h2 { color: #1a3a6b; margin-top: 1.8em;
+       border-bottom: 1px solid #d5dce6; padding-bottom: 0.2em; }
+  h3 { color: #2c4a7c; margin-top: 1.3em; }
+  code, .mono { font-family: Consolas, "Courier New", monospace;
+                background: #f0f2f5; padding: 0.1em 0.35em;
+                border-radius: 3px; font-size: 0.95em; }
+  table { border-collapse: collapse; margin: 1em 0; width: 100%; }
+  th, td { border: 1px solid #c9d2de; padding: 0.45em 0.7em;
+           text-align: left; vertical-align: top; }
+  th { background: #eef1f6; }
+  .tip { background: #eef7ee; border-left: 4px solid #2e7d32;
+         padding: 0.6em 1em; margin: 1em 0; }
+  .warn { background: #fdf3f2; border-left: 4px solid #d32f2f;
+          padding: 0.6em 1em; margin: 1em 0; }
+  .note { font-size: 0.9em; color: #555; margin-top: 2.5em;
+          border-top: 1px solid #ddd; padding-top: 0.8em; }
+  ul li, ol li { margin: 0.25em 0; }
+  a { color: #1565c0; }
+</style>
+</head>
+<body>
+<h1>Advanced Profile Tool — User Guide</h1>
+<p><a href="index.html">&larr; Back to help home</a></p>
+
+<h2 id="overview">1. Overview</h2>
+<p>The Advanced Profile Tool generates cross-sections and long sections
+along a selected alignment, samples elevations from one or more DEM
+rasters, plots the resulting profiles, compares surfaces (cut/fill), and
+computes earthworks volumes. Results can be exported to GeoPackage, CSV,
+DXF and image/PDF formats. Three algorithms are also registered in the
+Processing Toolbox under <em>Advanced Profile Tool &rarr; Profiles</em>
+for scripted and batch use.</p>
+
+<h2 id="workflow">2. Workflow</h2>
+<p>The dialog follows the run sequence from left to right:</p>
+<ol>
+  <li><strong>Alignment</strong> — choose the line layer and feature(s)
+      that define the route.</li>
+  <li><strong>Section Layout</strong> — set interval, widths, tangent
+      method, labelling and chainage limits.</li>
+  <li><strong>DEM Surfaces</strong> — add the rasters to sample, with
+      per-surface band, interpolation, vertical offset and style.</li>
+  <li><strong>Generate</strong> — build the section lines and sample all
+      enabled surfaces.</li>
+  <li><strong>Viewer</strong> — step through the profiles, adjust
+      vertical exaggeration, inspect elevations.</li>
+  <li><strong>Comparison / Volumes</strong> — difference two surfaces,
+      review cut/fill areas per section and volumes between
+      sections.</li>
+  <li><strong>Outputs</strong> — export layers, tables, plots and
+      drawings.</li>
+</ol>
+
+<h2 id="tabs">3. Tab reference</h2>
+
+<h3>3.1 Alignment</h3>
+<ul>
+  <li>Select the alignment layer and either the selected features or a
+      single picked feature.</li>
+  <li>The layer must be in (or be assigned) a <strong>projected
+      CRS</strong>; distances are computed in the layer's linear units.
+      Geographic (degree) CRSs are rejected — see
+      <a href="#troubleshooting">Troubleshooting</a>.</li>
+  <li>Multipart lines are joined end-to-end where parts touch within a
+      small tolerance; parts that cannot be joined are treated as
+      separate alignments. A reject option is available where multipart
+      input indicates a data problem.</li>
+  <li>The direction of increasing chainage follows the digitised
+      direction; a reverse option flips it. A start chainage offset sets
+      the displayed chainage at the alignment start (for example
+      1+000 rather than 0+000).</li>
+</ul>
+
+<h3>3.2 Section Layout</h3>
+<ul>
+  <li><strong>Interval mode</strong>: sections at a regular chainage
+      interval (default 20&nbsp;m), by count, or from an explicit
+      chainage list. Alignment endpoints can be included or excluded,
+      and vertex chainages added.</li>
+  <li><strong>Widths</strong>: left and right widths (default
+      25&nbsp;m each) measured perpendicular to the alignment.</li>
+  <li><strong>Tangent method</strong>: <em>local</em> uses the segment
+      direction at the chainage; <em>averaged</em> and
+      <em>smoothed</em> blend directions over a distance to reduce
+      fanning and crossing of sections at sharp bends.</li>
+  <li><strong>Labelling</strong>: label format
+      (default <code>{prefix}{number} {chainage}</code>), prefix,
+      numbering, and the major-section frequency (every 5th by
+      default). Major sections draw with a heavier style.</li>
+</ul>
+
+<h3>3.3 DEM Surfaces</h3>
+<ul>
+  <li>Add any number of raster surfaces; each has its own band,
+      interpolation method, vertical offset (datum adjustment), colour
+      and line style, and can be toggled on or off.</li>
+  <li>One surface is nominated the <em>reference</em> for comparisons
+      and volumes.</li>
+  <li>The sampling interval defaults to half the finest DEM pixel size;
+      it can be set manually.</li>
+</ul>
+
+<h3>3.4 Generate</h3>
+<ul>
+  <li>Runs the section generation and DEM sampling as a background
+      task with progress and cancellation.</li>
+  <li>Warnings (intersecting sections, NoData gaps, clamped chainage
+      limits) are listed on completion and logged to the
+      <em>AdvancedProfileTool</em> message log.</li>
+</ul>
+
+<h3>3.5 Viewer</h3>
+<ul>
+  <li>Steps through sections (and the long section) with all enabled
+      surfaces plotted against offset.</li>
+  <li>Vertical exaggeration defaults to 10&times; and is adjustable;
+      elevations, grid and cursor read-out honour the configured decimal
+      places.</li>
+</ul>
+
+<h3>3.6 Comparison / Volumes</h3>
+<ul>
+  <li>Difference is computed as <em>comparison &minus; reference</em>:
+      <strong>fill</strong> where the comparison surface is above the
+      reference, <strong>cut</strong> where below.</li>
+  <li>Cut and fill areas per section are integrated by the trapezoidal
+      rule with exact zero-crossing splits; NoData spans are excluded
+      and reported as gap length.</li>
+  <li>Volumes between consecutive sections use the
+      <strong>average end area</strong> method
+      (V = (A<sub>1</sub> + A<sub>2</sub>)/2 &times; L), with a
+      <strong>prismoidal</strong> option for higher accuracy where
+      areas change rapidly between sections.</li>
+</ul>
+
+<h3>3.7 Outputs</h3>
+<ul>
+  <li>Section lines, profile points and result tables to a GeoPackage
+      (default <code>advanced_profile_outputs.gpkg</code>), optionally
+      in timestamped runs and per-run subfolders.</li>
+  <li>Profile and comparison tables to CSV.</li>
+  <li>Section plots to PNG/PDF at the configured page size (A3
+      landscape by default).</li>
+  <li>Profiles to DXF (layers prefixed <code>APT_</code>) for CAD.</li>
+</ul>
+
+<h2 id="chainage">4. Chainage formats</h2>
+<table>
+  <tr><th>Format</th><th>Example (1240.5&nbsp;m)</th></tr>
+  <tr><td>Station <code>0+000</code> (default)</td><td>1+240.50</td></tr>
+  <tr><td><code>CH 0+000</code></td><td>CH 1+240.50</td></tr>
+  <tr><td><code>STA 0+000</code></td><td>STA 1+240.50</td></tr>
+  <tr><td>Plain</td><td>1240.50</td></tr>
+</table>
+<p>Chainage entry fields accept any of the above forms, including
+negative chainages ahead of the datum.</p>
+
+<h2 id="offsets">5. Offset convention</h2>
+<p>Offsets are signed distances perpendicular to the alignment:
+<strong>negative to the left</strong>, positive to the right, when
+looking in the direction of increasing chainage. Section lines are
+written left end &rarr; centre &rarr; right end, so the geometric start
+of each section line is its left end. A display option shows unsigned
+offsets with L/R suffixes instead.</p>
+
+<h2 id="interpolation">6. DEM interpolation and NoData</h2>
+<table>
+  <tr><th>Method</th><th>Behaviour</th><th>Use</th></tr>
+  <tr><td>Nearest</td><td>Value of the nearest cell.</td>
+      <td>Categorical or already-smoothed data; exact cell values.</td></tr>
+  <tr><td>Bilinear (default)</td><td>Weighted mean of the 4 surrounding
+      cells.</td><td>General terrain profiling.</td></tr>
+  <tr><td>Cubic</td><td>16-cell cubic convolution.</td>
+      <td>Smooth surfaces where slope continuity matters; can slightly
+      overshoot near sharp edges.</td></tr>
+</table>
+<p><strong>NoData handling</strong>: by default NoData samples remain as
+gaps in the profile (nothing is invented) and a warning reports the
+count. Optionally, gaps shorter than a maximum length (default
+5&nbsp;m) can be bridged by linear interpolation across the gap; longer
+gaps always remain open. Gap lengths are excluded from comparison areas
+and reported separately.</p>
+
+<h2 id="volumes">7. Volume method</h2>
+<p>Cross-section areas are converted to volumes between consecutive
+valid sections by the <strong>average end area</strong> method:</p>
+<p class="mono">V = (A&#8321; + A&#8322;) / 2 &times; L</p>
+<p>where L is the chainage difference between the sections. Cut and
+fill are accumulated separately, with cumulative and net (mass-haul)
+totals reported. The <strong>prismoidal</strong> option applies the
+prismoidal correction where section shape changes significantly, which
+reduces the systematic overestimate of the average end area method on
+tapering earthworks. Sections invalidated by excessive NoData are
+skipped and the affected intervals flagged.</p>
+
+<h2 id="exports">8. Export formats</h2>
+<table>
+  <tr><th>Format</th><th>Content</th></tr>
+  <tr><td>GeoPackage</td><td>Section lines (with id, label, chainage,
+      major flag), profile points, comparison and volume tables.</td></tr>
+  <tr><td>CSV</td><td>Profile samples (section, offset, elevation per
+      surface), cut/fill areas, volume table.</td></tr>
+  <tr><td>DXF</td><td>Profile linework per surface on
+      <code>APT_</code>-prefixed layers with grid and annotation.</td></tr>
+  <tr><td>PNG / PDF</td><td>Plotted sections at the configured page
+      size and vertical exaggeration.</td></tr>
+</table>
+
+<h2 id="troubleshooting">9. Troubleshooting</h2>
+
+<h3>"Calculation CRS is geographic (degree units)"</h3>
+<p>The alignment (or chosen calculation CRS) is in latitude/longitude,
+so distances would be computed in degrees. Reproject the alignment to a
+projected CRS (for example the local MGA/UTM zone) or select a projected
+calculation CRS. The plugin can suggest the UTM zone covering the layer
+extent.</p>
+
+<h3>Gaps in profiles (NoData)</h3>
+<p>Gaps indicate NoData cells or samples outside the DEM extent. Check
+raster coverage against the section extents and the declared NoData
+value. Enable gap interpolation only where short voids are acceptable to
+bridge; note that bridged spans are estimates, not measurements.</p>
+
+<h3>Intersecting section lines</h3>
+<p>On tight bends, adjacent perpendicular sections can cross within the
+section width, double-counting terrain in volume results. The generator
+reports intersecting pairs. Remedies: use the averaged or smoothed
+tangent method, reduce section widths, or increase the interval through
+the bend. Review flagged sections before relying on volumes.</p>
+
+<h3>No sections generated</h3>
+<p>Confirm the alignment feature is selected, the chainage window lies
+within the alignment length, and the interval is smaller than the
+alignment length. Warnings on the Generate tab identify rejected or
+clamped inputs.</p>
+
+<h2 id="licence">10. Licence</h2>
+<p>Advanced Profile Tool — Copyright &copy; 2026 Nikhil Jacob.</p>
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the Licence, or (at your
+option) any later version. It is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for details.</p>
+
+<p class="note">Results depend on input data quality. Verify sampled
+surfaces, datums and volumes against survey control before using them
+for design or contractual quantities.</p>
+</body>
+</html>

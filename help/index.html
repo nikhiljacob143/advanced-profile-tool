@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!-- Copyright (C) 2026 Nikhil Jacob — GPL v2 or later -->
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced Profile Tool — Help</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #222;
+         max-width: 760px; margin: 2em auto; padding: 0 1.5em;
+         line-height: 1.55; }
+  h1 { color: #1a3a6b; border-bottom: 2px solid #1a3a6b;
+       padding-bottom: 0.3em; }
+  h2 { color: #1a3a6b; margin-top: 1.6em; }
+  a { color: #1565c0; }
+  .card { background: #f4f6f9; border: 1px solid #d5dce6;
+          border-radius: 6px; padding: 1em 1.2em; margin: 1em 0; }
+  ol li { margin: 0.3em 0; }
+  .note { font-size: 0.9em; color: #555; margin-top: 2.5em;
+          border-top: 1px solid #ddd; padding-top: 0.8em; }
+</style>
+</head>
+<body>
+<h1>Advanced Profile Tool</h1>
+<p>Cross-section and long-section profiling for QGIS&nbsp;3.44:
+generate section lines along an alignment, sample one or more DEM
+surfaces, compare surfaces, compute cut/fill areas and volumes, and
+export the results.</p>
+
+<div class="card">
+  <strong>Full documentation:</strong>
+  <a href="user_guide.html">User guide</a> — workflow, tab reference,
+  chainage and offset conventions, volume methods, export formats and
+  troubleshooting.
+</div>
+
+<h2>Quick start</h2>
+<ol>
+  <li>Load an alignment line layer (projected CRS) and one or more DEM
+      rasters.</li>
+  <li>Open the plugin, select the alignment feature and set the section
+      interval and widths.</li>
+  <li>Add the DEM surfaces to sample and choose the interpolation
+      method.</li>
+  <li>Generate: section lines are created and profiles sampled.</li>
+  <li>Review profiles in the viewer, run surface comparison and volume
+      calculations, then export.</li>
+</ol>
+
+<h2>Conventions at a glance</h2>
+<ul>
+  <li>Offsets are signed: <strong>negative = left</strong> of the
+      direction of increasing chainage.</li>
+  <li>Chainage display: 0+000 station format by default (CH / STA /
+      plain also available).</li>
+  <li>NoData cells are never invented — they appear as gaps unless gap
+      interpolation is enabled.</li>
+</ul>
+
+<p class="note">Advanced Profile Tool — Copyright &copy; 2026 Nikhil
+Jacob. Licensed under the GNU General Public License v2 or later. This
+program comes with ABSOLUTELY NO WARRANTY.</p>
+</body>
+</html>
